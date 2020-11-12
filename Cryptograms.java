@@ -13,6 +13,7 @@ class Cryptograms{
     HashMap<String, String> letterMap = new HashMap<String, String>();
     String[] alpha = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
             "t", "u", "v", "w", "x", "y", "z"};
+    ArrayList<String> foundWords = new ArrayList<String>();
     public static void main(String[] args){
         Cryptograms c = new Cryptograms();
         c.dictionary = c.parseFile("dictionary.txt"); // parse the dictionary text file
@@ -47,7 +48,11 @@ class Cryptograms{
              *  2b. working solution isn"t a complete solution: start a new word at beginning of alpha
              */
             if(curWord.length() == input.get(i).length()){ // 2
-                curSol.add(curWord);
+
+                if(!foundWords.contains(curWord)){
+                    curSol.add(curWord);
+                }
+                
                 if (curSol.size() == input.size()) { // 2a
                     sol.add(curSol);
                     /* to create a new curSol when finished with current:
@@ -57,7 +62,21 @@ class Cryptograms{
                     will at least start the next curSol with the latest value of j in the first index?
                     might need a flag for when we get to line 65, j = 1
                     */
-                    return 1; //
+                    ArrayList<String> newSol = new ArrayList<String>();
+                    //int mark = alpha.indexOf(curSol.charAt(0));
+                    for(int k = 0; k < curSol.size() - 1; k++){
+                        newSol.add(curSol.get(k));
+                    }
+
+                    //curWord = 
+
+                    if(checkSubstring(curWord.substring(0, i - 1))){
+                        //do some stuff
+                    }
+
+                    return buildSolutions(sol, newSol, curWord, input, 0, j);
+
+                    //return 1; // this got to the end of a solution and added
                 }
 
                 else{ // 2b -> will just create a new word in curSol
@@ -72,22 +91,26 @@ class Cryptograms{
                 
         }
         else{ // if not, break branch, check next letter in alpha
-            if(j == 26){
+            if(j == 26){ // this got to the end of the alphabet, backtrack
                 return 0;
             }
             String key = String.valueOf(input.get(i).charAt(curWord.length() - 1));
-
-            if(letterMap.containsKey(key)){ // if we've already mapped a letter to another, just add that to the curWord
-                curWord = curWord.substring(0, curWord.length() - 2) + letterMap.get(key);
-                //make a condition so that if already in sol, won't create duplicates
-            }
-            else{
-                curWord = curWord.substring(0, curWord.length() - 2) + alpha[j];
-                letterMap.put(key, alpha[j]);
-            }
-
+            curWord = updateWord(curWord, j, input, i);
             return buildSolutions(sol, curSol, curWord, input, i, ++j);
         }
+    }
+
+    public String updateWord(String word, int j, ArrayList<String> input, int i){
+        String key = String.valueOf(input.get(i).charAt(word.length() - 1));
+
+        if (letterMap.containsKey(key)) { // if we've already mapped a letter to another, just add that to the curWord
+            return word.substring(0, word.length() - 2) + letterMap.get(key);
+            // make a condition so that if already in sol, won't create duplicates
+        } else {
+            letterMap.put(key, alpha[j]);
+            return word.substring(0, word.length() - 2) + alpha[j];
+        }
+
     }
 
     /*public String letterSub(String curWord, int a){
