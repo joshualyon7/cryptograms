@@ -19,8 +19,13 @@ class Cryptograms{
         c.input = new ArrayList<String>(Arrays.asList(args));
         System.out.println("input = " + c.input);
         System.out.println(((c.input.toString()).length() - 2 - ((c.input.size() - 1) * 2)));
-        //Vector<String> solutions = new Vector<String>();
-        //c.buildSolutions(solutions, "", c.input);
+        //ArrayList<String> solutions = new ArrayList<String>();
+        //ArrayList<String> currentSol = new ArrayList<String>();
+        //c.buildSolutions(solutions, currentSol, "", c.input, 0, 0);
+        /*for(int i : solutions.length() - 1){
+            System.out.println(solutions.get(i), " \n")
+        }
+        */
         //System.out.println(solutions);
 
 
@@ -45,16 +50,23 @@ class Cryptograms{
                 curSol.add(curWord);
                 if (curSol.size() == input.size()) { // 2a
                     sol.add(curSol);
-                    return 1;
+                    /* to create a new curSol when finished with current:
+                    ArrayList<String> newSol = new ArrayList<String>
+                    int mark = alpha.indexOf(curSol.charAt(0))
+                    return buildSolutions(sol, newSol, "", input, 0, mark) (instead of ret 1)
+                    will at least start the next curSol with the latest value of j in the first index?
+                    might need a flag for when we get to line 65, j = 1
+                    */
+                    return 1; //
                 }
 
-                else{ // 2b
+                else{ // 2b -> will just create a new word in curSol
                     return buildSolutions(sol, curSol, "", input, ++i, 0);
                 }
             }
 
             else{ // 1
-                curWord += "a";
+                curWord += "a"; //if curWord.length == 1, return buildSolutions(sol, curSol, curWord, input, i, j); (with most recent j here)
                 return buildSolutions(sol, curSol, curWord, input, i, 1);
             }
                 
@@ -67,8 +79,8 @@ class Cryptograms{
 
             if(letterMap.containsKey(key)){ // if we've already mapped a letter to another, just add that to the curWord
                 curWord = curWord.substring(0, curWord.length() - 2) + letterMap.get(key);
+                //make a condition so that if already in sol, won't create duplicates
             }
-
             else{
                 curWord = curWord.substring(0, curWord.length() - 2) + alpha[j];
                 letterMap.put(key, alpha[j]);
