@@ -35,11 +35,9 @@ public class Crypto {
         for (char ch : input.toCharArray()) { // expand input to list of char w/space
             c.inList.add(String.valueOf(ch)); 
         }
-        
-        System.out.println(c.inList);
 
         HashMap<String, String> map = new HashMap<String, String>();
-        c.decrypt(map, "", 0, 0);
+        c.decrypt(map, "a", 0, 0);
         System.out.println(c.sol.size());
         for(String s : c.sol){
             System.out.println(s);
@@ -50,16 +48,12 @@ public class Crypto {
 
     public void decrypt(HashMap<String, String> map, String cur, int i, int wordInd){
 
-        
-        //System.out.println("recursive call with: " + cur);
         if(inList.get(i).equals(" ")){
             if(!dictionary.contains(cur.split(" ")[0])){
-                //System.out.println(cur.split(" ")[0]);
                 return;
             }
             cur += " ";
             i++;
-            //System.out.println("incrementing wordInd");
             wordInd++;
         }
 
@@ -87,17 +81,13 @@ public class Crypto {
             cur += "a";
         }
         
-        
-        
-        /***** INPUT = gop pgo *****/
-        for(int j = 0; j < 26;){
+        for(int j = 0; j < 26; j++){
 
-            
+            cur = cur.substring(0, i) + alpha[j];
+
             String[] curWords = cur.split(" ");
             String curWord = curWords[wordInd];
-            if (inList.get(i).equals("l") && curWord.startsWith("noh")) {
-                System.out.println("break");
-            }
+
             HashMap<String, String> nMap = new HashMap<String, String>();
             for (int k = 0; k < i + 1; k++) { // clear all mappings after i
                 if (map.containsKey(String.valueOf(inList.get(k))) && map.get(String.valueOf(inList.get(k)) ) != null) {
@@ -106,36 +96,20 @@ public class Crypto {
             }
             map = nMap;
 
-            if(!checkSubstring(curWord)){
-                
-                if(++j < 26){
-                    cur = cur.substring(0, i) + alpha[j];
+            if(!checkSubstring(curWord) || map.containsValue(alpha[j])){
                     continue;
-                }
-                else{
-                    return;
-                }
             }
 
-            
-            
             map.put(inList.get(i), alpha[j]);
-            
-            cur = cur.substring(0, i) + alpha[j];
 
             if(dictionary.containsAll(Arrays.asList(cur.split(" "))) && cur.length() == inList.size() && !sol.contains(cur)){ // if the solution exists, add it to the list
                 sol.add(cur);
             }
-
-             // go to the next letter 
             
             if(cur.length() < inList.size()){
                 decrypt(map, cur, i + 1, wordInd);
             }
-            
-            j++;
         }
-
     }
 
     public boolean checkSubstring(String test) {
