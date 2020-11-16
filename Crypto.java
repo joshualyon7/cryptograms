@@ -3,11 +3,9 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Vector;
 
-import javax.print.attribute.standard.PrinterInfo;
 
 public class Crypto {
 
@@ -94,20 +92,21 @@ public class Crypto {
         /***** INPUT = gop pgo *****/
         for(int j = 0; j < 26;){
 
+            
             String[] curWords = cur.split(" ");
             String curWord = curWords[wordInd];
-
-            
-
+            if (inList.get(i).equals("l") && curWord.startsWith("noh")) {
+                System.out.println("break");
+            }
             HashMap<String, String> nMap = new HashMap<String, String>();
-            for (int k = 0; k < i; k++) { // clear all mappings after i
-                if (map.containsKey(String.valueOf(inList.get(k)))) {
+            for (int k = 0; k < i + 1; k++) { // clear all mappings after i
+                if (map.containsKey(String.valueOf(inList.get(k))) && map.get(String.valueOf(inList.get(k)) ) != null) {
                     nMap.put(inList.get(k), map.get(inList.get(k)));
                 }
             }
             map = nMap;
 
-            if(!checkSubstring(curWord) || map.containsValue(alpha[j])){
+            if(!checkSubstring(curWord)){
                 
                 if(++j < 26){
                     cur = cur.substring(0, i) + alpha[j];
@@ -118,21 +117,23 @@ public class Crypto {
                 }
             }
 
+            
+            
             map.put(inList.get(i), alpha[j]);
             
+            cur = cur.substring(0, i) + alpha[j];
 
             if(dictionary.containsAll(Arrays.asList(cur.split(" "))) && cur.length() == inList.size() && !sol.contains(cur)){ // if the solution exists, add it to the list
                 sol.add(cur);
             }
 
-            cur = cur.substring(0, i) + alpha[j]; // go to the next letter 
+             // go to the next letter 
             
             if(cur.length() < inList.size()){
                 decrypt(map, cur, i + 1, wordInd);
             }
             
             j++;
-            
         }
 
     }
